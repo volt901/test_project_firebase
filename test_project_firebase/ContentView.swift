@@ -6,11 +6,50 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct ContentView: View {
+    
+    @ObservedObject var model = ViewModel()
+    @State var name = ""
+    @State var age = ""
+    
     var body: some View {
-        Text("Hello, world!")
+        VStack{
+            
+            List (model.list) { item in
+                HStack {
+                Text(item.age)
+                    Spacer()
+                    Button(action: {
+                        model.updateData(todoToUpdate: item)
+                    }, label: {
+                        Image(systemName: "pencil")
+                    }).buttonStyle(.plain)
+                    Spacer()
+                    Button(action: {
+                        model.deleteData(todoToDelete: item)
+                    }, label: {
+                        Image(systemName: "minus")
+                    }).buttonStyle(.bordered)
+                }
+            }
+            Divider()
+            VStack (spacing: 5){
+                TextField ("Name", text: $name).textFieldStyle(.roundedBorder)
+                TextField ("Age", text: $age).textFieldStyle(.roundedBorder)
+                
+                Button (action: {
+                    model.addData(name: name, age: age)
+                }, label: {
+                    Text("Add Todo:")
+                })
+            }
             .padding()
+        }
+    }
+    init() {
+        model.getData()
     }
 }
 
